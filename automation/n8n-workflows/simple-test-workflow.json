@@ -1,0 +1,70 @@
+{
+  "name": "SoOptimal Simple Lead Test",
+  "settings": {},
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Website Lead Test",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 200],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sooptimal-simple-test",
+        "responseMode": "respondWith",
+        "responseData": "firstEntryJson"
+      }
+    },
+    {
+      "id": "ai-scorer",
+      "name": "AI Lead Scorer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 200],
+      "parameters": {
+        "jsCode": "// Simple Lead Scoring Test\nconst leadData = $input.item.json;\n\n// Calculate lead score\nlet score = 0;\nconst projectType = (leadData.projectType || '').toLowerCase();\nconst timeline = (leadData.timeline || '').toLowerCase();\nconst location = (leadData.location || '').toLowerCase();\n\n// Project type scoring\nif (projectType.includes('commercial')) score += 35;\nif (projectType.includes('urgent')) score += 25;\nif (projectType.includes('basement')) score += 20;\nif (projectType.includes('installation')) score += 15;\n\n// Timeline urgency\nif (timeline.includes('urgent') || timeline.includes('asap')) score += 25;\nif (timeline.includes('this week')) score += 20;\nif (timeline.includes('this month')) score += 15;\n\n// Location premium\nif (location.includes('kitchener') || location.includes('waterloo')) score += 10;\nif (location.includes('toronto')) score += 15;\n\n// Budget estimation\nconst sqft = parseInt(leadData.squareFootage) || 0;\nconst estimatedValue = sqft * 3;\nif (estimatedValue > 10000) score += 30;\nelse if (estimatedValue > 5000) score += 25;\nelse if (estimatedValue > 2000) score += 20;\n\n// Determine priority\nlet priority = 'low';\nlet estimatedBudget = '$500-1000';\nif (score >= 60) {\n  priority = 'urgent';\n  estimatedBudget = '$2000-5000+';\n} else if (score >= 40) {\n  priority = 'high';\n  estimatedBudget = '$1000-2500';\n} else if (score >= 25) {\n  priority = 'medium';\n  estimatedBudget = '$500-1500';\n}\n\nreturn {\n  json: {\n    ...leadData,\n    leadScore: score,\n    priority: priority,\n    estimatedValue: estimatedBudget,\n    timestamp: new Date().toISOString(),\n    testResult: `✅ LEAD SCORED: ${score} points - ${priority.toUpperCase()} priority - ${estimatedBudget} estimated value`\n  }\n};"
+      }
+    },
+    {
+      "id": "sms-test",
+      "name": "SMS Test (TextBelt)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.textbelt.com/text",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "{\n  \"phone\": \"4378304202\",\n  \"message\": \"🧪 LEAD TEST SUCCESSFUL!\\n\\n👤 {{ $json.name }}\\n📞 {{ $json.phone }}\\n🏗️ {{ $json.projectType }}\\n📍 {{ $json.location }}\\n📊 Score: {{ $json.leadScore }}/100\\n💰 {{ $json.estimatedValue }}\\n⚡ Priority: {{ $json.priority.toUpperCase() }}\\n\\n✅ Your AI lead system is working!\",\n  \"key\": \"textbelt\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Website Lead Test": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Scorer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Scorer": {
+      "main": [
+        [
+          {
+            "node": "SMS Test (TextBelt)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

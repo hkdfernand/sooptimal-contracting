@@ -172,9 +172,27 @@ class QuoteCalculator {
     }
     
     async submitQuoteRequest(quoteData) {
-        // This would integrate with your backend/n8n workflow
-        // For now, we'll simulate success
-        return new Promise(resolve => setTimeout(resolve, 2000));
+        // Submit to n8n webhook for processing
+        const webhookUrl = 'https://hkdfernand.app.n8n.cloud/webhook/sooptimal-quote';
+        
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(quoteData)
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to submit quote request');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Quote submission error:', error);
+            throw error;
+        }
     }
     
     showSuccessMessage() {
@@ -238,8 +256,31 @@ class ContactForm {
     }
     
     async submitContact(data) {
-        // This would integrate with your backend
-        return new Promise(resolve => setTimeout(resolve, 1500));
+        // Submit contact form to n8n webhook
+        const webhookUrl = 'https://hkdfernand.app.n8n.cloud/webhook/sooptimal-quote';
+        
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...data,
+                    formType: 'contact', // Distinguish from quote requests
+                    projectType: 'general inquiry'
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to submit contact form');
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Contact form error:', error);
+            throw error;
+        }
     }
     
     showContactSuccess() {

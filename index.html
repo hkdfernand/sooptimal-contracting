@@ -3,261 +3,1133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoOptimal Contracting - Professional Drywall Services</title>
-    <meta name="description" content="Expert drywall installation, repair, and finishing services. Precision work for residential and commercial projects in Kitchener-Waterloo region.">
-    <link rel="stylesheet" href="./src/styles.css">
+    <title>Drywall Contractor in Kitchener-Waterloo | SoOptimal Contracting</title>
+    <meta name="description" content="SoOptimal Contracting provides drywall installation, repairs, taping, mudding, finishing, and commercial drywall services across Kitchener, Waterloo, Cambridge, Guelph, and surrounding areas. Request a free quote today.">
+    <link rel="canonical" href="https://sooptimal.com/">
+    
+    <!-- Google Search Console Verification (Replace with actual verification meta tag when provided) -->
+    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE"> -->
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="SoOptimal Contracting">
+    <meta name="geo.region" content="CA-ON">
+    <meta name="geo.placename" content="Kitchener-Waterloo">
+    <meta name="geo.position" content="43.4516;-80.4925">
+    <meta name="ICBM" content="43.4516, -80.4925">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- LocalBusiness JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "SoOptimal Contracting",
+      "url": "https://sooptimal.com/",
+      "telephone": "+14378304202",
+      "email": "fernandconstructions@sooptimal.com",
+      "areaServed": ["Kitchener", "Waterloo", "Cambridge", "Guelph", "Kitchener-Waterloo Region"],
+      "description": "Professional drywall installation, repair, taping, mudding, finishing, and commercial drywall services.",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "ON",
+        "addressCountry": "CA"
+      }
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .nav-brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 0;
+        }
+
+        .brand-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0;
+            margin-top: -2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #374151;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: #1e40af;
+        }
+
+        .nav-cta {
+            background: #1e40af;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .nav-cta:hover {
+            background: #1e3a8a;
+            transform: translateY(-1px);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #374151;
+            margin: 2px 0;
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: calc(80px + 80px) 24px 80px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .hero-eyebrow {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: #4b5563;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            background: #1e40af;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 2px solid #1e40af;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background: #1e3a8a;
+            border-color: #1e3a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.25);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            background: transparent;
+            color: #1e40af;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 2px solid #1e40af;
+            font-size: 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #1e40af;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .trust-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .trust-pill {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: left;
+        }
+
+        .stat-number {
+            display: block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 96px 24px;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            color: #1f2937;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .section-description {
+            font-size: 18px;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .service-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.25s ease;
+            height: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .service-title {
+            font-family: 'Space Grotesk', sans-serif;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .service-description {
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            padding: 6px 0;
+            color: #6b7280;
+            position: relative;
+            padding-left: 20px;
+            font-size: 15px;
+        }
+
+        .service-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* Why Choose Us Section */
+        .trust-section {
+            padding: 96px 24px;
+            background: #f8fafc;
+        }
+
+        .trust-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .trust-text {
+            padding-right: 32px;
+        }
+
+        .section-eyebrow {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .trust-features {
+            list-style: none;
+            margin-top: 32px;
+        }
+
+        .trust-feature {
+            margin-bottom: 24px;
+            padding-left: 0;
+        }
+
+        .trust-feature h4 {
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .trust-feature p {
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Portfolio Section */
+        .portfolio-section {
+            padding: 96px 24px;
+            background: white;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .portfolio-info {
+            padding: 24px;
+        }
+
+        .portfolio-info h3 {
+            margin-bottom: 8px;
+            color: #1f2937;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+        }
+
+        .portfolio-info p {
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 96px 24px;
+            background: #f8fafc;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .process-step {
+            text-align: center;
+            padding: 32px 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: #1e40af;
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .step-description {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 96px 24px;
+            background: white;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .faq-item {
+            padding: 24px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .faq-answer {
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 96px 24px;
+            background: #f8fafc;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-cards {
+            display: grid;
+            gap: 24px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .contact-card h3 {
+            color: #1f2937;
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .contact-card p {
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .contact-card a {
+            color: #1e40af;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-card a:hover {
+            color: #1e3a8a;
+        }
+
+        .quote-form {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            height: fit-content;
+        }
+
+        .quote-form h3 {
+            margin-bottom: 8px;
+            color: #1f2937;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .quote-form p {
+            margin-bottom: 24px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1e40af;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 64px 24px 32px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 64px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand h3 {
+            color: white;
+            margin-bottom: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .footer-brand p {
+            color: #9ca3af;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 32px;
+        }
+
+        .footer-section h4 {
+            color: white;
+            margin-bottom: 16px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 32px;
+            border-top: 1px solid #374151;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .trust-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .trust-text {
+                padding-right: 0;
+                text-align: center;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                text-align: center;
+            }
+            
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .trust-pills {
+                justify-content: center;
+            }
+        }
+
+        /* Utility Classes */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav-container">
-        <div class="nav-content">
-            <div class="nav-brand">
-                <h1 class="brand-text">SoOptimal Contracting</h1>
-                <p class="brand-subtitle">Precision Drywall Solutions</p>
+    <header>
+        <nav class="nav-container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <h1 class="brand-text">SoOptimal Contracting</h1>
+                    <p class="brand-subtitle">Drywall • Taping • Finishing</p>
+                </div>
+                <div class="nav-menu">
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#work" class="nav-link">Work</a>
+                    <a href="#process" class="nav-link">Process</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                    <a href="tel:+14378304202" class="nav-cta">Call (437) 830-4202</a>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
-            <div class="nav-menu">
-                <a href="#services" class="nav-link">Services</a>
-                <a href="#portfolio" class="nav-link">Portfolio</a>
-                <a href="#quote" class="nav-link">Get Quote</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </div>
-            <button class="nav-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h2 class="hero-title">Expert Drywall Solutions for Every Project</h2>
-                <p class="hero-description">From single rooms to 300+ apartment complexes, we deliver optimal results with precision craftsmanship and reliable service.</p>
-                <div class="hero-actions">
-                    <a href="#quote" class="btn-primary">Get Free Quote</a>
-                    <a href="#portfolio" class="btn-secondary">View Our Work</a>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-eyebrow">Kitchener-Waterloo drywall contractor</div>
+                    <h2 class="hero-title">Clean drywall work that's ready for paint — without the contractor headaches.</h2>
+                    <p class="hero-description">SoOptimal Contracting handles drywall installation, repairs, taping, mudding, and finishing for homeowners, builders, landlords, and commercial projects across Kitchener, Waterloo, Cambridge, Guelph, and nearby areas.</p>
+                    <div class="hero-actions">
+                        <a href="tel:+14378304202" class="btn-primary">Call for a Free Quote</a>
+                        <a href="#contact" class="btn-secondary">Request a Quote Online</a>
+                    </div>
+                    <div class="trust-pills">
+                        <div class="trust-pill">Free estimates</div>
+                        <div class="trust-pill">Residential & commercial</div>
+                        <div class="trust-pill">Clean, paint-ready finishes</div>
+                        <div class="trust-pill">Local KW service</div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">10+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Projects Completed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">98%</span>
+                            <span class="stat-label">Client Satisfaction</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Projects Completed</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">98%</span>
-                        <span class="stat-label">Client Satisfaction</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">10+</span>
-                        <span class="stat-label">Years Experience</span>
-                    </div>
+                <div class="hero-visual">
+                    <img src="/images/portfolio/hero-image.jpg" alt="Professional drywall installation work showing clean seams and paint-ready finish by SoOptimal Contracting in Kitchener-Waterloo" class="hero-image">
                 </div>
             </div>
-            <div class="hero-visual">
-                <img src="/images/portfolio/hero-image.jpg" alt="Professional drywall work by SoOptimal Contracting" class="hero-image">
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Services Section -->
-    <section id="services" class="services-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Services</h2>
-                <p class="section-description">Comprehensive drywall solutions for residential and commercial projects</p>
-            </div>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🏗️</div>
-                    <h3 class="service-title">Drywall Installation</h3>
-                    <p class="service-description">Complete drywall installation for new construction and renovations</p>
-                    <ul class="service-features">
-                        <li>Residential & Commercial</li>
-                        <li>Standard & Moisture-Resistant</li>
-                        <li>Fire-Rated Options</li>
-                    </ul>
+        <!-- Services Section -->
+        <section id="services" class="services-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Drywall services for small repairs, full renovations, and large builds.</h2>
+                    <p class="section-description">Whether you need one room patched or a multi-unit project completed, the goal is the same: straight boards, clean seams, smooth finishes, and a jobsite that stays organized.</p>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <h3 class="service-title">Repairs & Patches</h3>
-                    <p class="service-description">Expert repair services for holes, cracks, and damage</p>
-                    <ul class="service-features">
-                        <li>Small Hole Repairs</li>
-                        <li>Large Section Replacement</li>
-                        <li>Texture Matching</li>
-                    </ul>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🎨</div>
-                    <h3 class="service-title">Taping & Finishing</h3>
-                    <p class="service-description">Professional taping, mudding, and finishing services</p>
-                    <ul class="service-features">
-                        <li>Level 5 Finish</li>
-                        <li>Smooth & Textured</li>
-                        <li>Paint-Ready Surfaces</li>
-                    </ul>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🏢</div>
-                    <h3 class="service-title">Commercial Projects</h3>
-                    <p class="service-description">Large-scale commercial and multi-unit residential projects</p>
-                    <ul class="service-features">
-                        <li>Office Buildings</li>
-                        <li>Apartment Complexes</li>
-                        <li>Retail Spaces</li>
-                    </ul>
+                <div class="services-grid">
+                    <article class="service-card">
+                        <h3 class="service-title">Drywall Installation</h3>
+                        <p class="service-description">Professional board installation for basements, additions, renovations, new construction, and commercial spaces.</p>
+                        <ul class="service-features">
+                            <li>Residential and commercial</li>
+                            <li>Moisture-resistant drywall</li>
+                            <li>Fire-rated assemblies</li>
+                        </ul>
+                    </article>
+                    <article class="service-card">
+                        <h3 class="service-title">Repairs & Patches</h3>
+                        <p class="service-description">Fast, clean repairs for holes, cracks, water damage, removed fixtures, and damaged wall or ceiling sections.</p>
+                        <ul class="service-features">
+                            <li>Small and large repairs</li>
+                            <li>Ceiling and wall patches</li>
+                            <li>Texture matching where possible</li>
+                        </ul>
+                    </article>
+                    <article class="service-card">
+                        <h3 class="service-title">Taping & Finishing</h3>
+                        <p class="service-description">Careful taping, mudding, sanding, and finishing so surfaces are ready for primer and paint.</p>
+                        <ul class="service-features">
+                            <li>Level 4 and Level 5 finishes</li>
+                            <li>Smooth and textured surfaces</li>
+                            <li>Paint-ready preparation</li>
+                        </ul>
+                    </article>
+                    <article class="service-card">
+                        <h3 class="service-title">Commercial Projects</h3>
+                        <p class="service-description">Reliable drywall support for offices, retail spaces, rentals, apartment buildings, and builder-led projects.</p>
+                        <ul class="service-features">
+                            <li>Multi-unit residential</li>
+                            <li>Office and retail interiors</li>
+                            <li>Schedule-conscious crews</li>
+                        </ul>
+                    </article>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Work</h2>
-                <p class="section-description">See the quality and precision in every project we complete</p>
-            </div>
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <img src="/images/portfolio/project1.jpg" alt="Residential drywall renovation project" class="portfolio-image">
-                    <div class="portfolio-info">
-                        <h3>Residential Renovation</h3>
-                        <p>Complete drywall installation and finishing</p>
-                    </div>
+        <!-- Why Choose Us / Trust Section -->
+        <section class="trust-section">
+            <div class="trust-content">
+                <div class="trust-text">
+                    <div class="section-eyebrow">Why homeowners and builders call us</div>
+                    <h2 class="section-title">Good drywall is invisible when it's done. That's the point.</h2>
+                    <p class="section-description">Poor seams, rushed sanding, and messy work show up the second paint hits the wall. We focus on clean prep, proper finishing, and clear communication so the final result looks sharp and the project stays moving.</p>
+                    <a href="tel:+14378304202" class="btn-primary">Get My Free Estimate</a>
                 </div>
-                <div class="portfolio-item">
-                    <img src="/images/portfolio/project2.jpg" alt="Commercial office drywall project" class="portfolio-image">
-                    <div class="portfolio-info">
-                        <h3>Commercial Office</h3>
-                        <p>Large-scale commercial project</p>
+                <div class="trust-features">
+                    <div class="trust-feature">
+                        <h4>1. Clear scope before work starts</h4>
+                        <p>We confirm the area, finish level, access, timeline, and any special materials needed.</p>
                     </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="/images/portfolio/project3.jpg" alt="Multi-unit apartment drywall project" class="portfolio-image">
-                    <div class="portfolio-info">
-                        <h3>Apartment Complex</h3>
-                        <p>Multi-unit residential development</p>
+                    <div class="trust-feature">
+                        <h4>2. Reliable scheduling</h4>
+                        <p>You get realistic timing, not vague promises that leave you waiting.</p>
+                    </div>
+                    <div class="trust-feature">
+                        <h4>3. Clean, professional finish</h4>
+                        <p>Boards, seams, corners, sanding, and cleanup are handled with care.</p>
+                    </div>
+                    <div class="trust-feature">
+                        <h4>4. Local service area</h4>
+                        <p>Serving Kitchener, Waterloo, Cambridge, Guelph, and surrounding communities.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Quote Calculator Section -->
-    <section id="quote" class="quote-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Get Your Free Quote</h2>
-                <p class="section-description">Quick estimate for your drywall project</p>
+        <!-- Work / Portfolio Section -->
+        <section id="work" class="portfolio-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Recent drywall work</h2>
+                    <p class="section-description">Use real before-and-after photos here whenever possible. Real project photos will build more trust than generic stock images.</p>
+                </div>
+                <div class="portfolio-grid">
+                    <article class="portfolio-item">
+                        <img src="/images/portfolio/project1.jpg" alt="Residential renovation drywall work showing before and after installation and finishing" class="portfolio-image">
+                        <div class="portfolio-info">
+                            <h3>Residential Renovation</h3>
+                            <p>Drywall installation, taping, mudding, sanding, and paint-ready finishing for a home renovation.</p>
+                        </div>
+                    </article>
+                    <article class="portfolio-item">
+                        <img src="/images/portfolio/project2.jpg" alt="Commercial office space drywall installation with professional finish" class="portfolio-image">
+                        <div class="portfolio-info">
+                            <h3>Commercial Office</h3>
+                            <p>Interior drywall work for commercial space with schedule-conscious coordination.</p>
+                        </div>
+                    </article>
+                    <article class="portfolio-item">
+                        <img src="/images/portfolio/project3.jpg" alt="Multi-unit apartment building drywall project showing scale and quality" class="portfolio-image">
+                        <div class="portfolio-info">
+                            <h3>Multi-Unit Project</h3>
+                            <p>Drywall support for apartment, rental, and builder-led residential projects.</p>
+                        </div>
+                    </article>
+                </div>
+                <p style="text-align: center; color: #6b7280; margin-top: 32px; font-style: italic;">
+                    Tip: replace these images with your strongest real jobsite photos, especially close-ups of clean seams, corners, ceilings, and finished rooms.
+                </p>
             </div>
-            <div class="quote-calculator">
-                <form id="quoteForm" class="quote-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="projectType" class="form-label">Project Type</label>
-                            <select id="projectType" name="projectType" class="form-input" required>
-                                <option value="">Select project type</option>
-                                <option value="residential">Residential</option>
-                                <option value="commercial">Commercial</option>
-                                <option value="repair">Repair Work</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="roomCount" class="form-label">Number of Rooms/Units</label>
-                            <input type="number" id="roomCount" name="roomCount" min="1" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="sqFootage" class="form-label">Square Footage</label>
-                            <input type="number" id="sqFootage" name="sqFootage" min="1" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceType" class="form-label">Service Needed</label>
-                            <select id="serviceType" name="serviceType" class="form-input" required>
-                                <option value="">Select service</option>
-                                <option value="installation">New Installation</option>
-                                <option value="repair">Repair Work</option>
-                                <option value="finishing">Taping & Finishing</option>
-                                <option value="complete">Complete Service</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="projectDetails" class="form-label">Project Details</label>
-                        <textarea id="projectDetails" name="projectDetails" rows="4" class="form-input" placeholder="Describe your project requirements..."></textarea>
-                    </div>
-                    <div class="form-group full-width">
-                        <h3>Contact Information</h3>
-                        <div class="contact-grid">
-                            <input type="text" name="name" placeholder="Your Name" class="form-input" required>
-                            <input type="email" name="email" placeholder="Email Address" class="form-input" required>
-                            <input type="tel" name="phone" placeholder="Phone Number" class="form-input" required>
-                            <input type="text" name="address" placeholder="Project Address" class="form-input" required>
-                        </div>
-                    </div>
-                    <div class="quote-result" id="quoteResult" style="display: none;">
-                        <div class="estimate-box">
-                            <h3>Estimated Cost Range</h3>
-                            <div class="price-range" id="priceRange"></div>
-                            <p class="estimate-note">*This is a preliminary estimate. Final pricing will be determined after on-site assessment.</p>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-primary full-width">Calculate Estimate & Send Quote Request</button>
-                </form>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Contact Us</h2>
-                <p class="section-description">Ready to start your project? Get in touch today.</p>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <h3>Phone</h3>
-                        <p><a href="tel:+14378304202">(437) 830-4202</a></p>
+        <!-- Process Section -->
+        <section id="process" class="process-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">A simple quote process</h2>
+                    <p class="section-description">No complicated back-and-forth. Send the basics and we'll help you move from "I need drywall" to a clear next step.</p>
+                </div>
+                <div class="process-steps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Tell us about the job</h3>
+                        <p class="step-description">Call, email, or send the form with your location, timeline, photos, measurements, or plans.</p>
                     </div>
-                    <div class="contact-item">
-                        <h3>Email</h3>
-                        <p><a href="mailto:fernandconstructions@sooptimal.com">fernandconstructions@sooptimal.com</a></p>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Get a clear estimate</h3>
+                        <p class="step-description">We review the scope and provide a quote or arrange a site visit if needed.</p>
                     </div>
-                    <div class="contact-item">
-                        <h3>Service Area</h3>
-                        <p>Kitchener-Waterloo Region<br>Cambridge, Guelph, and surrounding areas</p>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Schedule the work</h3>
+                        <p class="step-description">We confirm materials, access, timing, and what needs to be ready before we arrive.</p>
                     </div>
-                    <div class="contact-item">
-                        <h3>Business Hours</h3>
-                        <p>Monday - Friday: 7:00 AM - 6:00 PM<br>Saturday: 8:00 AM - 4:00 PM<br>Sunday: Emergency calls only</p>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <h3 class="step-title">Finish clean</h3>
+                        <p class="step-description">Your drywall is completed with attention to seams, corners, sanding, and cleanup.</p>
                     </div>
                 </div>
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" name="name" placeholder="Your Name" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" name="email" placeholder="Email Address" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" name="phone" placeholder="Phone Number" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea name="message" rows="5" placeholder="Tell us about your project..." class="form-input" required></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary full-width">Send Message</button>
-                    </form>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Drywall questions we hear often</h2>
+                    <p class="section-description">Helpful answers for homeowners, builders, and property managers comparing drywall contractors.</p>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h3 class="faq-question">Do you handle both small repairs and full installations?</h3>
+                        <p class="faq-answer">Yes. We can help with small patches, ceiling repairs, renovations, basements, additions, commercial interiors, and larger multi-unit projects.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question">What areas do you serve?</h3>
+                        <p class="faq-answer">We serve Kitchener, Waterloo, Cambridge, Guelph, and surrounding areas in the Kitchener-Waterloo region.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question">Can I get a quote from photos?</h3>
+                        <p class="faq-answer">Often, yes. Photos, rough measurements, location, and timeline help us estimate. Some jobs may need a site visit for accuracy.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-question">Do you provide paint-ready finishing?</h3>
+                        <p class="faq-answer">Yes. We handle taping, mudding, sanding, and finishing so surfaces are prepared for primer and paint.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Contact / Quote Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Get your free drywall quote</h2>
+                    <p class="section-description">Call now for the fastest response, or send project details and we'll follow up.</p>
+                </div>
+                <div class="contact-content">
+                    <div class="contact-cards">
+                        <div class="contact-card">
+                            <h3>Phone</h3>
+                            <p><a href="tel:+14378304202">(437) 830-4202</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>Email</h3>
+                            <p><a href="mailto:fernandconstructions@sooptimal.com">fernandconstructions@sooptimal.com</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>Service Area</h3>
+                            <p>Kitchener-Waterloo Region, Cambridge, Guelph, and surrounding areas</p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>Business Hours</h3>
+                            <p>Monday - Friday: 7:00 AM - 6:00 PM<br>Saturday: 8:00 AM - 4:00 PM<br>Sunday: Emergency calls only</p>
+                        </div>
+                    </div>
+                    <div class="quote-form">
+                        <h3>Get your free drywall quote</h3>
+                        <p>Send photos, measurements, your location, desired timeline, and whether the job is repair, install, taping, finishing, or commercial.</p>
+                        <form id="quoteForm" action="mailto:fernandconstructions@sooptimal.com" method="post" enctype="text/plain">
+                            <!-- TODO: Replace with proper backend form processing -->
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone *</label>
+                                <input type="tel" id="phone" name="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectType">Project Type *</label>
+                                <select id="projectType" name="projectType" required>
+                                    <option value="">Select project type</option>
+                                    <option value="residential">Residential</option>
+                                    <option value="commercial">Commercial</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceType">Service Needed *</label>
+                                <select id="serviceType" name="serviceType" required>
+                                    <option value="">Select service</option>
+                                    <option value="installation">Drywall Installation</option>
+                                    <option value="repair">Repairs & Patches</option>
+                                    <option value="finishing">Taping & Finishing</option>
+                                    <option value="complete">Complete Service</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sqFootage">Square Footage (approximate)</label>
+                                <input type="number" id="sqFootage" name="sqFootage" placeholder="e.g., 1000">
+                            </div>
+                            <div class="form-group">
+                                <label for="roomCount">Number of Rooms/Units</label>
+                                <input type="number" id="roomCount" name="roomCount" placeholder="e.g., 3">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Project Location</label>
+                                <input type="text" id="address" name="address" placeholder="City or general area">
+                            </div>
+                            <div class="form-group">
+                                <label for="projectDetails">Project Details</label>
+                                <textarea id="projectDetails" name="projectDetails" placeholder="Describe your project, timeline, and any specific requirements..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%;">Send Quote Request</button>
+                        </form>
+                        
+                        <!-- Hidden quote result section -->
+                        <div id="quoteResult" style="display: none; margin-top: 24px; padding: 20px; background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px;">
+                            <h4 style="color: #0369a1; margin-bottom: 12px;">Estimated Price Range</h4>
+                            <div id="priceRange" style="font-size: 24px; font-weight: 700; color: #0369a1; margin-bottom: 12px;"></div>
+                            <p style="margin: 0; font-size: 14px; color: #64748b;">*Preliminary estimate based on provided details. Final pricing determined after consultation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
@@ -265,7 +1137,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <h3>SoOptimal Contracting</h3>
-                    <p>Professional drywall solutions with optimal results.</p>
+                    <p>Professional drywall installation, repair, taping, mudding, finishing, and commercial drywall services across Kitchener-Waterloo, Cambridge, Guelph, and surrounding areas.</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-section">
@@ -278,21 +1150,62 @@
                         </ul>
                     </div>
                     <div class="footer-section">
+                        <h4>Service Areas</h4>
+                        <ul>
+                            <li><a href="#contact">Kitchener</a></li>
+                            <li><a href="#contact">Waterloo</a></li>
+                            <li><a href="#contact">Cambridge</a></li>
+                            <li><a href="#contact">Guelph</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
                         <h4>Company</h4>
                         <ul>
-                            <li><a href="#portfolio">Portfolio</a></li>
-                            <li><a href="#quote">Get Quote</a></li>
+                            <li><a href="#work">Our Work</a></li>
+                            <li><a href="#process">Process</a></li>
+                            <li><a href="#faq">FAQ</a></li>
                             <li><a href="#contact">Contact</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 SoOptimal Contracting. All rights reserved.</p>
+                <p>&copy; 2026 SoOptimal Contracting. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script type="module" src="./src/script.js"></script>
+    <!-- Load the existing quote calculator script -->
+    <script src="/src/script.js"></script>
+    
+    <!-- Smooth scrolling for anchor links -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = document.querySelector('.nav-container').offsetHeight;
+                    const targetPosition = target.offsetTop - navHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Mobile navigation toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('nav-menu-open');
+                navToggle.classList.toggle('nav-toggle-active');
+            });
+        }
+    </script>
 </body>
 </html>

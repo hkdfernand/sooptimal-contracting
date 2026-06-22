@@ -1,0 +1,140 @@
+{
+  "name": "SoOptimal Lead Qualification & SMS Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "filters": {
+          "labelIds": ["INBOX"]
+        },
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        }
+      },
+      "id": "gmail-trigger",
+      "name": "Gmail - New Lead Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [100, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Advanced Lead Classification System\nconst headers = $input.item.json.payload?.headers || [];\nconst subject = headers.find(h => h.name === 'Subject')?.value || '';\nconst from = headers.find(h => h.name === 'From')?.value || '';\nconst body = $input.item.json.snippet || '';\nconst fullContent = (subject + ' ' + body).toLowerCase();\n\n// High-value keywords with weighted scoring\nconst keywords = {\n  'drywall': 15,\n  'basement': 20,\n  'renovation': 18,\n  'commercial': 25,\n  'apartment': 22,\n  'urgent': 30,\n  'asap': 25,\n  'quote': 12,\n  'estimate': 12,\n  'contractor': 10,\n  'repair': 8,\n  'installation': 15,\n  'finishing': 12,\n  'multi-unit': 30,\n  'building': 20,\n  'budget': 10,\n  'timeline': 8\n};\n\n// Calculate lead score\nlet leadScore = 0;\nlet foundKeywords = [];\n\nObject.entries(keywords).forEach(([keyword, points]) => {\n  if (fullContent.includes(keyword)) {\n    leadScore += points;\n    foundKeywords.push(keyword);\n  }\n});\n\n// Project size indicators\nconst sizeIndicators = {\n  'sq ft': 15,\n  'square feet': 15,\n  'rooms': 10,\n  'floor': 12,\n  'house': 15,\n  'condo': 12,\n  'office': 18\n};\n\nObject.entries(sizeIndicators).forEach(([indicator, points]) => {\n  if (fullContent.includes(indicator)) {\n    leadScore += points;\n  }\n});\n\n// Determine lead priority\nlet priority = 'low';\nlet action = 'log';\n\nif (leadScore >= 40) {\n  priority = 'urgent';\n  action = 'immediate_sms';\n} else if (leadScore >= 25) {\n  priority = 'high';\n  action = 'sms';\n} else if (leadScore >= 10) {\n  priority = 'medium';\n  action = 'email_alert';\n}\n\n// Extract contact info\nconst phoneRegex = /\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b/;\nconst phoneMatch = fullContent.match(phoneRegex);\n\nreturn {\n  json: {\n    timestamp: new Date().toISOString(),\n    from: from,\n    subject: subject,\n    body: body.substring(0, 300),\n    leadScore: leadScore,\n    priority: priority,\n    action: action,\n    keywords: foundKeywords.join(', '),\n    phone: phoneMatch ? phoneMatch[0] : null,\n    estimatedValue: leadScore >= 30 ? '$1500+' : leadScore >= 15 ? '$800+' : '$400+',\n    urgencyLevel: fullContent.includes('urgent') || fullContent.includes('asap') ? 'HIGH' : 'NORMAL'\n  }\n};"
+      },
+      "id": "lead-classifier",
+      "name": "AI Lead Classifier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "={{ $json.action }}",
+            "operation": "contains",
+            "rightValue": "sms"
+          }
+        }
+      },
+      "id": "sms-filter",
+      "name": "SMS Worthy Lead?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [500, 150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.textbelt.com/text",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"phone\": \"4378304202\",\n  \"message\": \"🚨 {{ $json.priority.toUpperCase() }} LEAD ALERT (${{ $json.estimatedValue }})\\n\\n📧 From: {{ $json.from }}\\n📋 Subject: {{ $json.subject }}\\n💰 Score: {{ $json.leadScore }}/100\\n🏷️ Keywords: {{ $json.keywords }}\\n⏰ {{ $json.urgencyLevel }} PRIORITY\\n\\n📞 RESPOND NOW - Every minute = money!\",\n  \"key\": \"textbelt\"\n}",
+        "options": {}
+      },
+      "id": "sms-alert",
+      "name": "Send Lead Alert SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 100]
+    },
+    {
+      "parameters": {
+        "operation": "appendRow",
+        "documentId": "1BvlRWW8_Tf-LMK-dYgL2uS8QVu7fOjLJ9nT2QwK2fXs",
+        "sheetName": "Leads",
+        "options": {},
+        "columnNames": "timestamp,from,subject,leadScore,priority,keywords,phone,estimatedValue,urgencyLevel,status",
+        "values": {
+          "timestamp": "={{ $json.timestamp }}",
+          "from": "={{ $json.from }}",
+          "subject": "={{ $json.subject }}",
+          "leadScore": "={{ $json.leadScore }}",
+          "priority": "={{ $json.priority }}",
+          "keywords": "={{ $json.keywords }}",
+          "phone": "={{ $json.phone }}",
+          "estimatedValue": "={{ $json.estimatedValue }}",
+          "urgencyLevel": "={{ $json.urgencyLevel }}",
+          "status": "new"
+        }
+      },
+      "id": "save-lead",
+      "name": "Save Lead to Database",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [500, 280]
+    }
+  ],
+  "connections": {
+    "Gmail - New Lead Email": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Classifier": {
+      "main": [
+        [
+          {
+            "node": "SMS Worthy Lead?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Lead to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMS Worthy Lead?": {
+      "main": [
+        [
+          {
+            "node": "Send Lead Alert SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["lead-qualification", "sms", "automation"],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-01T18:15:00.000Z",
+  "versionId": 1
+}

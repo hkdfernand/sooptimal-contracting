@@ -1,0 +1,154 @@
+{
+  "name": "SoOptimal Facebook Auto-Posting",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Post Schedule (3x Daily)",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [100, 200]
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_ID",
+        "options": {
+          "fields": "files(id,name,mimeType,webViewLink,webContentLink,thumbnailLink)"
+        }
+      },
+      "id": "fetch-assets",
+      "name": "Fetch Content from Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [300, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Intelligent Content Selection & Caption Generation\nconst assets = $input.all();\nconst imageAssets = assets.filter(asset => \n  asset.json.mimeType && asset.json.mimeType.startsWith('image/')\n);\n\nif (imageAssets.length === 0) {\n  return { json: { error: 'No image assets found in Drive' } };\n}\n\n// Smart asset selection based on time of day\nconst hour = new Date().getHours();\nlet assetPriority = [];\n\nif (hour >= 7 && hour <= 11) {\n  // Morning: Motivational/Professional content\n  assetPriority = ['professional', 'team', 'tools', 'before'];\n} else if (hour >= 12 && hour <= 17) {\n  // Afternoon: Work in progress\n  assetPriority = ['progress', 'action', 'work'];\n} else {\n  // Evening: Completed projects\n  assetPriority = ['after', 'completed', 'finished'];\n}\n\n// Select appropriate asset\nlet selectedAsset = imageAssets[0]; // fallback\nfor (let priority of assetPriority) {\n  const match = imageAssets.find(asset => \n    asset.json.name.toLowerCase().includes(priority)\n  );\n  if (match) {\n    selectedAsset = match;\n    break;\n  }\n}\n\n// If no match, select random\nif (!selectedAsset || selectedAsset === imageAssets[0]) {\n  selectedAsset = imageAssets[Math.floor(Math.random() * imageAssets.length)];\n}\n\n// Dynamic caption templates based on content type\nconst captionTemplates = {\n  morning: [\n    \"🌅 Starting another day of quality drywall work in the KW region! Professional results you can trust. Call (437) 830-4202 for your free estimate!\",\n    \"☕ Good morning! Ready to transform your space with expert drywall services? Serving Kitchener, Waterloo, Cambridge & Guelph.\",\n    \"🏗️ Monday motivation: Every wall we finish is a step toward your dream space. Professional drywall installation & repair.\"\n  ],\n  afternoon: [\n    \"🔨 Hard at work delivering paint-ready finishes! This is what 10+ years of drywall experience looks like.\",\n    \"⚡ Progress update: Another satisfied client in the making! Quality drywall work that stands the test of time.\",\n    \"🎯 Precision matters in drywall. Clean lines, smooth finish - that's the SoOptimal difference.\"\n  ],\n  evening: [\n    \"✨ Another successful project completed! From rough to paint-ready - we handle it all in the KW region.\",\n    \"🏠 Transform your space with professional drywall services. This client is ready for paint! Who's next?\",\n    \"💪 Day's work done! Quality drywall installation that homeowners love. Book your consultation today.\"\n  ]\n};\n\n// Select appropriate caption\nlet timeCategory = 'afternoon';\nif (hour >= 7 && hour <= 11) timeCategory = 'morning';\nelse if (hour >= 18 && hour <= 23) timeCategory = 'evening';\n\nconst templates = captionTemplates[timeCategory];\nconst selectedCaption = templates[Math.floor(Math.random() * templates.length)];\n\n// Add call-to-action and hashtags\nconst cta = \"\\n\\n📞 Ready for your project? Call (437) 830-4202 | 🌐 sooptimal.com\";\nconst hashtags = \"\\n\\n#SoOptimalContracting #Drywall #KitchenerWaterloo #Professional #QualityWork #FreeEstimate #HomeImprovement #Renovation #Construction #KW\";\n\nreturn {\n  json: {\n    assetId: selectedAsset.json.id,\n    assetName: selectedAsset.json.name,\n    imageUrl: selectedAsset.json.webContentLink,\n    thumbnailUrl: selectedAsset.json.thumbnailLink,\n    caption: selectedCaption + cta + hashtags,\n    timeOfDay: timeCategory,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "content-selector",
+      "name": "Smart Content Selection",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_FACEBOOK_PAGE_ID/photos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_FACEBOOK_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.imageUrl }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "published",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "id": "facebook-post",
+      "name": "Post to Facebook Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "operation": "appendRow",
+        "documentId": "1BvlRWW8_Tf-LMK-dYgL2uS8QVu7fOjLJ9nT2QwK2fXs",
+        "sheetName": "Social Posts",
+        "options": {},
+        "columnNames": "timestamp,platform,assetName,caption,timeOfDay,status",
+        "values": {
+          "timestamp": "={{ $json.timestamp }}",
+          "platform": "Facebook",
+          "assetName": "={{ $json.assetName }}",
+          "caption": "={{ $json.caption.substring(0, 100) }}...",
+          "timeOfDay": "={{ $json.timeOfDay }}",
+          "status": "posted"
+        }
+      },
+      "id": "log-post",
+      "name": "Log Social Media Activity",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [700, 350]
+    }
+  ],
+  "connections": {
+    "Post Schedule (3x Daily)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Content from Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Content from Drive": {
+      "main": [
+        [
+          {
+            "node": "Smart Content Selection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smart Content Selection": {
+      "main": [
+        [
+          {
+            "node": "Post to Facebook Page",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Social Media Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["facebook", "social-media", "automation"],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-01T18:15:00.000Z",
+  "versionId": 1
+}

@@ -1,0 +1,213 @@
+{
+  "name": "SoOptimal Contracting Lead Management",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sooptimal-quote",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Quote Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// SoOptimal Contracting Pricing Calculator\nconst data = $input.all()[0].json;\n\n// Pricing rates per sq ft\nconst rates = {\n  residential: {\n    installation: 2.50,\n    repair: 45, // per hour\n    finishing: 3.25,\n    complete: 4.75\n  },\n  commercial: {\n    installation: 2.25,\n    repair: 55, // per hour  \n    finishing: 3.00,\n    complete: 4.25\n  }\n};\n\nconst minimums = {\n  residential: 350,\n  commercial: 1500,\n  repair: 200\n};\n\nconst projectType = data.projectType || 'residential';\nconst serviceType = data.serviceType || 'complete';\nconst sqFootage = parseInt(data.sqFootage) || 0;\nconst roomCount = parseInt(data.roomCount) || 1;\n\nlet basePrice;\nif (serviceType === 'repair') {\n  const estimatedHours = Math.max(sqFootage / 50, 2);\n  basePrice = estimatedHours * rates[projectType][serviceType];\n} else {\n  basePrice = sqFootage * rates[projectType][serviceType];\n}\n\n// Apply minimum\nbasePrice = Math.max(basePrice, minimums[projectType]);\n\n// Bulk discounts for large projects\nif (sqFootage > 2000) basePrice *= 0.92; // 8% discount\nif (sqFootage > 5000) basePrice *= 0.88; // additional 4% (12% total)\n\n// Room complexity multiplier\nif (roomCount > 5) basePrice *= 1.1;\n\nconst lowPrice = Math.round(basePrice * 0.85);\nconst highPrice = Math.round(basePrice * 1.15);\n\nreturn {\n  ...data,\n  pricing: {\n    lowPrice,\n    highPrice,\n    basePrice: Math.round(basePrice),\n    rate: rates[projectType][serviceType],\n    projectType,\n    serviceType,\n    sqFootage,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "pricing-calculator",
+      "name": "Calculate Pricing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "fernandconstructions@sooptimal.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Quote Request Received - SoOptimal Contracting",
+        "emailType": "html",
+        "message": "<!DOCTYPE html><html><head><style>body{font-family:Arial,sans-serif;background:#f9fafb;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:white;border-radius:8px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1)}.header{background:#1e40af;color:white;padding:24px;text-align:center}.header h1{margin:0;font-size:24px}.content{padding:24px}.estimate-box{background:#dbeafe;border:2px solid #3b82f6;padding:20px;margin:20px 0;border-radius:8px;text-align:center}.price-range{font-size:28px;font-weight:bold;color:#1e40af;margin:12px 0}.details{margin:20px 0}.details table{width:100%;border-collapse:collapse}.details th,.details td{padding:8px;text-align:left;border-bottom:1px solid #e5e7eb}.details th{background:#f9fafb}.next-steps{background:#ecfdf5;border-left:4px solid #10b981;padding:16px;margin:20px 0}.footer{background:#1f2937;color:white;padding:16px;text-align:center}.footer a{color:#60a5fa}</style></head><body><div class=\"container\"><div class=\"header\"><h1>SoOptimal Contracting</h1><p>Professional Drywall Solutions</p></div><div class=\"content\"><h2>Thank You for Your Quote Request!</h2><p>Hi {{ $json.name }},</p><p>We've received your request for <strong>{{ $json.serviceType }}</strong> services for your <strong>{{ $json.projectType }}</strong> project.</p><div class=\"estimate-box\"><h3>Preliminary Cost Estimate</h3><div class=\"details\"><table><tr><th>Project Type</th><td>{{ $json.projectType }}</td></tr><tr><th>Service Type</th><td>{{ $json.serviceType }}</td></tr><tr><th>Square Footage</th><td>{{ $json.sqFootage }} sq ft</td></tr><tr><th>Rooms</th><td>{{ $json.roomCount }}</td></tr></table></div><div class=\"price-range\">${{ $json.pricing.lowPrice }} - ${{ $json.pricing.highPrice }}</div><p style=\"font-size:14px;color:#666;\"><em>*Preliminary estimate. Final pricing after on-site assessment.</em></p></div><div class=\"next-steps\"><h3>Your Next Steps</h3><ol><li><strong>Free Consultation:</strong> We'll contact you within 2 hours</li><li><strong>On-Site Assessment:</strong> Schedule free site visit</li><li><strong>Written Quote:</strong> Detailed pricing within 24 hours</li></ol></div><p>Questions? Call us at <a href=\"tel:+14378304202\">(437) 830-4202</a></p><p><strong>Fernand Havugimana</strong><br>Owner & Project Manager<br>SoOptimal Contracting</p></div><div class=\"footer\"><p><strong>SoOptimal Contracting</strong><br>Phone: <a href=\"tel:+14378304202\">(437) 830-4202</a><br>Email: fernandconstructions@sooptimal.com<br>Website: sooptimal.com</p></div></div></body></html>"
+      },
+      "id": "customer-email",
+      "name": "Send Customer Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 180]
+    },
+    {
+      "parameters": {
+        "fromEmail": "fernandconstructions@sooptimal.com",
+        "toEmail": "fernandconstructions@sooptimal.com",
+        "subject": "🚨 NEW LEAD: {{ $json.projectType }} - ${{ $json.pricing.basePrice }}",
+        "emailType": "html",
+        "message": "<!DOCTYPE html><html><head><style>body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:700px;margin:0 auto;background:white;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.1)}.header{background:#dc2626;color:white;padding:20px;text-align:center}.header h1{margin:0;font-size:20px}.high-value{background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;margin:20px}.content{padding:20px}.section{margin:20px 0}.section h2{color:#1f2937;border-bottom:2px solid #e5e7eb;padding-bottom:8px;font-size:16px}.details-table{width:100%;border-collapse:collapse;margin:16px 0}.details-table th,.details-table td{padding:8px;text-align:left;border-bottom:1px solid #e5e7eb;font-size:14px}.details-table th{background:#f9fafb}.pricing-table{background:#ecfdf5;border-radius:8px;padding:16px;margin:16px 0}.contact-info{background:#dbeafe;border-radius:8px;padding:16px}.actions{background:#fef2f2;border-left:4px solid #ef4444;padding:16px}.timestamp{font-size:12px;color:#666;text-align:center;padding:16px;border-top:1px solid #e5e7eb}</style></head><body><div class=\"container\"><div class=\"header\"><h1>🏗️ NEW LEAD ALERT</h1><p>SoOptimal Lead Management</p></div>{{ $json.pricing.basePrice > 5000 ? '<div class=\"high-value\"><strong>⭐ HIGH-VALUE LEAD</strong><br>Project over $5,000 - Priority follow-up!</div>' : '' }}<div class=\"content\"><div class=\"section\"><h2>📋 Project Overview</h2><table class=\"details-table\"><tr><td><strong>Customer</strong></td><td>{{ $json.name }}</td></tr><tr><td><strong>Project Type</strong></td><td>{{ $json.projectType }}</td></tr><tr><td><strong>Service</strong></td><td>{{ $json.serviceType }}</td></tr><tr><td><strong>Size</strong></td><td>{{ $json.sqFootage }} sq ft</td></tr><tr><td><strong>Rooms</strong></td><td>{{ $json.roomCount }}</td></tr><tr><td><strong>Location</strong></td><td>{{ $json.address || 'Not specified' }}</td></tr></table></div><div class=\"section\"><h2>💰 Pricing Analysis</h2><div class=\"pricing-table\"><table class=\"details-table\"><tr><td>Low Estimate</td><td><strong>${{ $json.pricing.lowPrice }}</strong></td></tr><tr><td>Base Price</td><td><strong>${{ $json.pricing.basePrice }}</strong></td></tr><tr><td>High Estimate</td><td><strong>${{ $json.pricing.highPrice }}</strong></td></tr><tr><td>Rate Applied</td><td>${{ $json.pricing.rate }}/sq ft</td></tr></table></div></div><div class=\"section\"><h2>📞 Contact Info</h2><div class=\"contact-info\"><p><strong>Phone:</strong> {{ $json.phone || 'Not provided' }}</p><p><strong>Email:</strong> {{ $json.email }}</p></div></div><div class=\"section\"><h2>📝 Project Details</h2><p>{{ $json.projectDetails || 'No details provided' }}</p></div><div class=\"section\"><h2>⏰ Action Items</h2><div class=\"actions\"><ol><li><strong>Call within 2 hours:</strong> {{ $json.phone || 'Get phone number' }}</li><li><strong>Schedule site visit</strong> within 24-48 hours</li><li><strong>Send written quote</strong> within 24 hours of visit</li></ol></div></div></div><div class=\"timestamp\">Lead received: {{ $now.toISO() }}</div></div></body></html>"
+      },
+      "id": "internal-alert",
+      "name": "Internal Lead Alert", 
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sheet-date",
+              "name": "date",
+              "type": "string",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}"
+            },
+            {
+              "id": "sheet-name", 
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "sheet-email",
+              "name": "email", 
+              "type": "string",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "id": "sheet-phone",
+              "name": "phone",
+              "type": "string", 
+              "value": "={{ $json.phone || 'Not provided' }}"
+            },
+            {
+              "id": "sheet-project-type",
+              "name": "projectType",
+              "type": "string",
+              "value": "={{ $json.projectType }}"
+            },
+            {
+              "id": "sheet-service-type", 
+              "name": "serviceType",
+              "type": "string",
+              "value": "={{ $json.serviceType }}"
+            },
+            {
+              "id": "sheet-sq-footage",
+              "name": "sqFootage", 
+              "type": "string",
+              "value": "={{ $json.sqFootage }}"
+            },
+            {
+              "id": "sheet-room-count",
+              "name": "roomCount",
+              "type": "string",
+              "value": "={{ $json.roomCount }}"
+            },
+            {
+              "id": "sheet-low-estimate",
+              "name": "lowEstimate",
+              "type": "string", 
+              "value": "={{ $json.pricing.lowPrice }}"
+            },
+            {
+              "id": "sheet-high-estimate",
+              "name": "highEstimate",
+              "type": "string",
+              "value": "={{ $json.pricing.highPrice }}"
+            },
+            {
+              "id": "sheet-base-price", 
+              "name": "basePrice",
+              "type": "string",
+              "value": "={{ $json.pricing.basePrice }}"
+            },
+            {
+              "id": "sheet-status",
+              "name": "status",
+              "type": "string",
+              "value": "New Lead"
+            },
+            {
+              "id": "sheet-priority",
+              "name": "priority", 
+              "type": "string",
+              "value": "={{ $json.pricing.basePrice > 5000 ? 'High Value' : 'Standard' }}"
+            }
+          ]
+        }
+      },
+      "id": "prepare-sheet-data",
+      "name": "Prepare Sheet Data",
+      "type": "n8n-nodes-base.set", 
+      "typeVersion": 3,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Quote request submitted successfully! We'll contact you within 2 business hours.\",\n  \"estimate\": {\n    \"range\": \"${{ $json.pricing.lowPrice }} - ${{ $json.pricing.highPrice }}\",\n    \"basePrice\": {{ $json.pricing.basePrice }},\n    \"projectType\": \"{{ $json.projectType }}\",\n    \"serviceType\": \"{{ $json.serviceType }}\"\n  },\n  \"nextSteps\": [\n    \"Free consultation call within 2 hours\",\n    \"On-site assessment scheduling\", \n    \"Detailed written quote within 24 hours\"\n  ],\n  \"contact\": {\n    \"phone\": \"(437) 830-4202\",\n    \"email\": \"fernandconstructions@sooptimal.com\"\n  }\n}",
+        "options": {
+          "responseHeaders": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type"
+          }
+        }
+      },
+      "id": "webhook-response",
+      "name": "Respond to Webhook", 
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Quote Request Webhook": {
+      "main": [
+        [
+          {
+            "node": "Calculate Pricing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Pricing": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Email",
+            "type": "main", 
+            "index": 0
+          },
+          {
+            "node": "Internal Lead Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Sheet Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheet Data": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

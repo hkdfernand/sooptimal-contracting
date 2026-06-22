@@ -1,0 +1,174 @@
+{
+  "name": "SoOptimal Contracting Lead Management",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sooptimal-quote",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Quote Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// SoOptimal Contracting Pricing Calculator\nconst data = $input.all()[0].json;\n\n// Pricing rates per sq ft\nconst rates = {\n  residential: {\n    installation: 2.50,\n    repair: 45, // per hour\n    finishing: 3.25,\n    complete: 4.75\n  },\n  commercial: {\n    installation: 2.25,\n    repair: 55, // per hour  \n    finishing: 3.00,\n    complete: 4.25\n  }\n};\n\nconst minimums = {\n  residential: 350,\n  commercial: 1500,\n  repair: 200\n};\n\nconst projectType = data.projectType || 'residential';\nconst serviceType = data.serviceType || 'complete';\nconst sqFootage = parseInt(data.sqFootage) || 0;\nconst roomCount = parseInt(data.roomCount) || 1;\n\nlet basePrice;\nif (serviceType === 'repair') {\n  const estimatedHours = Math.max(sqFootage / 50, 2);\n  basePrice = estimatedHours * rates[projectType][serviceType];\n} else {\n  basePrice = sqFootage * rates[projectType][serviceType];\n}\n\n// Apply minimum\nbasePrice = Math.max(basePrice, minimums[projectType]);\n\n// Bulk discounts\nif (sqFootage > 2000) basePrice *= 0.92;\nif (sqFootage > 5000) basePrice *= 0.88;\n\n// Room complexity\nif (roomCount > 5) basePrice *= 1.1;\n\nconst lowPrice = Math.round(basePrice * 0.85);\nconst highPrice = Math.round(basePrice * 1.15);\n\nreturn {\n  ...data,\n  pricing: {\n    lowPrice,\n    highPrice,\n    basePrice: Math.round(basePrice),\n    rate: rates[projectType][serviceType],\n    projectType,\n    serviceType,\n    sqFootage\n  }\n};"
+      },
+      "id": "calculate-pricing",
+      "name": "Calculate Pricing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "fernandconstructions@sooptimal.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "Quote Request Received - SoOptimal Contracting",
+        "emailType": "html",
+        "message": "<!DOCTYPE html><html><head><style>body{font-family:Arial,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px}header{background:#1e40af;color:white;padding:20px;text-align:center;border-radius:8px 8px 0 0}h1{margin:0;font-size:24px}.content{background:#f9fafb;padding:30px;border:1px solid #e5e7eb}.estimate-box{background:#dbeafe;border:1px solid #3b82f6;padding:20px;margin:20px 0;border-radius:8px}.price{font-size:28px;font-weight:bold;color:#1e40af;margin:10px 0}.footer{background:#374151;color:white;padding:20px;text-align:center;border-radius:0 0 8px 8px}</style></head><body><header><h1>SoOptimal Contracting</h1><p>Professional Drywall Solutions</p></header><div class='content'><h2>Thank You for Your Quote Request!</h2><p>Hi {{ $json.name }},</p><p>We've received your request for {{ $json.serviceType }} services for your {{ $json.projectType }} project. Here are the details:</p><div class='estimate-box'><h3>Project Details</h3><p><strong>Project Type:</strong> {{ $json.projectType | title }}<br><strong>Service:</strong> {{ $json.serviceType | title }}<br><strong>Square Footage:</strong> {{ $json.sqFootage }} sq ft<br><strong>Rooms/Units:</strong> {{ $json.roomCount }}</p><div class='price'>Estimated Range: ${{ $json.pricing.lowPrice | number_format }} - ${{ $json.pricing.highPrice | number_format }}</div><p><em>*This is a preliminary estimate. Final pricing will be determined after on-site assessment.</em></p></div><h3>Next Steps</h3><ol><li><strong>Free Consultation:</strong> We'll call you within 2 business hours to schedule a free on-site assessment</li><li><strong>Detailed Quote:</strong> After the site visit, you'll receive a comprehensive written quote within 24 hours</li><li><strong>Project Planning:</strong> Once approved, we'll schedule your project at your convenience</li></ol><h3>Why Choose SoOptimal?</h3><ul><li>✓ 10+ years of experience</li><li>✓ Licensed & insured ($2M coverage)</li><li>✓ 2-year workmanship warranty</li><li>✓ Competitive pricing with bulk discounts</li><li>✓ Local Kitchener-Waterloo based</li></ul></div><div class='footer'><p><strong>Contact Us:</strong><br>Phone: (437) 830-4202<br>Email: fernandconstructions@sooptimal.com<br>Website: sooptimal.com</p><p>Service Area: Kitchener-Waterloo, Cambridge, Guelph & surrounding areas</p></div></body></html>"
+      },
+      "id": "customer-email",
+      "name": "Send Customer Confirmation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "fernandconstructions@sooptimal.com",
+        "toEmail": "fernandconstructions@sooptimal.com",
+        "subject": "🚨 NEW LEAD: {{ $json.projectType | title }} - ${{ $json.pricing.basePrice | number_format }}",
+        "emailType": "html",
+        "message": "<!DOCTYPE html><html><head><style>body{font-family:Arial,sans-serif;line-height:1.6;color:#333;margin:0;padding:20px}h1{color:#dc2626;border-bottom:2px solid #dc2626;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd}th{background-color:#f2f2f2;font-weight:bold}.high-value{background-color:#fef3c7;border-left:4px solid #f59e0b;padding:15px;margin:20px 0}.contact-info{background-color:#ecfdf5;padding:15px;border-radius:8px;margin:20px 0}</style></head><body><h1>🏗️ NEW LEAD ALERT</h1>{{ $json.pricing.basePrice > 5000 ? '<div class=\"high-value\"><strong>⭐ HIGH-VALUE LEAD</strong> - Project estimated over $5,000!</div>' : '' }}<h2>Project Details</h2><table><tr><th>Field</th><th>Value</th></tr><tr><td>Customer Name</td><td>{{ $json.name }}</td></tr><tr><td>Project Type</td><td>{{ $json.projectType | title }}</td></tr><tr><td>Service Type</td><td>{{ $json.serviceType | title }}</td></tr><tr><td>Square Footage</td><td>{{ $json.sqFootage }} sq ft</td></tr><tr><td>Rooms/Units</td><td>{{ $json.roomCount }}</td></tr><tr><td>Location</td><td>{{ $json.address }}</td></tr></table><h2>💰 Pricing Analysis</h2><table><tr><th>Estimate Type</th><th>Amount</th></tr><tr><td>Low Estimate</td><td>${{ $json.pricing.lowPrice | number_format }}</td></tr><tr><td>Base Price</td><td><strong>${{ $json.pricing.basePrice | number_format }}</strong></td></tr><tr><td>High Estimate</td><td>${{ $json.pricing.highPrice | number_format }}</td></tr><tr><td>Rate Applied</td><td>${{ $json.pricing.rate }}/sq ft{{ $json.serviceType === 'repair' ? ' (hourly)' : '' }}</td></tr></table><div class='contact-info'><h3>📞 Contact Information</h3><p><strong>Phone:</strong> {{ $json.phone }}<br><strong>Email:</strong> {{ $json.email }}<br><strong>Address:</strong> {{ $json.address }}</p></div><h3>📝 Project Details</h3><p>{{ $json.projectDetails || 'No additional details provided.' }}</p><h3>⏰ Next Actions</h3><ol><li><strong>Call customer within 2 hours</strong> to schedule site visit</li><li>Prepare site assessment checklist</li><li>Send detailed written quote within 24 hours of visit</li><li>Follow up in 3-5 days if no response</li></ol><p><em>Lead received at: {{ $now.toISO() }}</em></p></body></html>"
+      },
+      "id": "internal-notification",
+      "name": "Internal Lead Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": "YOUR_GOOGLE_SHEET_ID_HERE",
+        "sheetName": "Leads",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Address": "={{ $json.address }}",
+            "Project Type": "={{ $json.projectType }}",
+            "Service Type": "={{ $json.serviceType }}",
+            "Square Footage": "={{ $json.sqFootage }}",
+            "Rooms": "={{ $json.roomCount }}",
+            "Low Estimate": "={{ $json.pricing.lowPrice }}",
+            "High Estimate": "={{ $json.pricing.highPrice }}",
+            "Base Price": "={{ $json.pricing.basePrice }}",
+            "Status": "New Lead",
+            "Details": "={{ $json.projectDetails }}"
+          }
+        }
+      },
+      "id": "store-lead",
+      "name": "Store Lead Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "responseBody": "{ \"success\": true, \"message\": \"Quote request submitted successfully! We'll contact you within 2 business hours.\", \"estimateRange\": \"${{ $json.pricing.lowPrice }} - ${{ $json.pricing.highPrice }}\" }",
+        "options": {
+          "responseHeaders": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          }
+        }
+      },
+      "id": "webhook-response",
+      "name": "Send Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Quote Request Webhook": {
+      "main": [
+        [
+          {
+            "node": "Calculate Pricing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Pricing": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Internal Lead Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Customer Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Store Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Internal Lead Notification": {
+      "main": [
+        [
+          {
+            "node": "Store Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Send Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-05-12T07:00:00.000Z",
+  "versionId": "1"
+}

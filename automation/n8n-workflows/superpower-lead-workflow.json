@@ -1,0 +1,241 @@
+{
+  "name": "SoOptimal Superpower Lead Management",
+  "settings": {},
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Website Lead Capture",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 200],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sooptimal-superpower-lead",
+        "responseMode": "respondWith",
+        "responseData": "firstEntryJson"
+      }
+    },
+    {
+      "id": "ai-lead-analyzer",
+      "name": "AI Lead Superpower Analyzer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 200],
+      "parameters": {
+        "jsCode": "// SoOptimal Superpower Lead Analysis\nconst leadData = $input.item.json;\n\n// Advanced Lead Scoring System\nfunction advancedLeadScoring(data) {\n  let totalScore = 0;\n  let scoringBreakdown = {};\n  \n  // Project type scoring (35-40 points possible)\n  const projectWeights = {\n    'commercial': 35, 'multi-unit': 40, 'basement renovation': 30,\n    'new construction': 25, 'repair work': 15, 'installation': 20\n  };\n  \n  const projectType = (data.projectType || '').toLowerCase();\n  Object.entries(projectWeights).forEach(([type, weight]) => {\n    if (projectType.includes(type)) {\n      totalScore += weight;\n      scoringBreakdown.projectType = { type, weight };\n    }\n  });\n  \n  // Urgency indicators (25 points possible)\n  const urgencyWeights = {\n    'urgent': 25, 'asap': 20, 'this week': 20, 'this month': 15, 'next month': 10\n  };\n  \n  const timeline = (data.timeline || '').toLowerCase();\n  const description = (data.description || '').toLowerCase();\n  const urgencyText = timeline + ' ' + description;\n  \n  Object.entries(urgencyWeights).forEach(([indicator, weight]) => {\n    if (urgencyText.includes(indicator)) {\n      totalScore += weight;\n      scoringBreakdown.urgency = { indicator, weight };\n    }\n  });\n  \n  // Budget estimation (30 points possible)\n  const sqft = parseInt(data.squareFootage) || 0;\n  const estimatedBudget = sqft * 3; // $3/sqft rough estimate\n  \n  let budgetScore = 0;\n  if (estimatedBudget > 10000) budgetScore = 30;\n  else if (estimatedBudget > 5000) budgetScore = 25;\n  else if (estimatedBudget > 2000) budgetScore = 20;\n  else if (estimatedBudget > 1000) budgetScore = 15;\n  else budgetScore = 5;\n  \n  totalScore += budgetScore;\n  scoringBreakdown.budget = { estimated: estimatedBudget, score: budgetScore };\n  \n  // Location premium (15 points possible)\n  const location = (data.location || '').toLowerCase();\n  const locationPremiums = {\n    'kitchener': 10, 'waterloo': 10, 'cambridge': 8, 'guelph': 8, 'toronto': 15\n  };\n  \n  Object.entries(locationPremiums).forEach(([city, premium]) => {\n    if (location.includes(city)) {\n      totalScore += premium;\n      scoringBreakdown.location = { city, premium };\n    }\n  });\n  \n  // Determine priority and actions\n  let priority = 'low';\n  let actions = ['email_follow_up'];\n  let estimatedValue = '$500-1000';\n  let responseTime = '4 hours';\n  \n  if (totalScore >= 60) {\n    priority = 'urgent';\n    actions = ['immediate_call', 'priority_sms', 'same_day_estimate'];\n    estimatedValue = '$2000-5000+';\n    responseTime = '15 minutes';\n  } else if (totalScore >= 40) {\n    priority = 'high';\n    actions = ['call_within_hour', 'personalized_sms', 'next_day_estimate'];\n    estimatedValue = '$1000-2500';\n    responseTime = '1 hour';\n  } else if (totalScore >= 25) {\n    priority = 'medium';\n    actions = ['call_within_4_hours', 'standard_sms'];\n    estimatedValue = '$500-1500';\n    responseTime = '4 hours';\n  }\n  \n  return {\n    ...data,\n    totalScore,\n    priority,\n    estimatedValue,\n    actions,\n    responseTime,\n    scoringBreakdown,\n    timestamp: new Date().toISOString(),\n    leadId: 'LEAD_' + Date.now()\n  };\n}\n\nconst analyzedLead = advancedLeadScoring(leadData);\nreturn { json: analyzedLead };"
+      }
+    },
+    {
+      "id": "priority-router",
+      "name": "Priority Lead Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [500, 200],
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "output": 0,
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.priority }}",
+                  "operation": "equal",
+                  "rightValue": "urgent"
+                }
+              }
+            },
+            {
+              "output": 1, 
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.priority }}",
+                  "operation": "equal",
+                  "rightValue": "high"
+                }
+              }
+            },
+            {
+              "output": 2,
+              "conditions": {
+                "options": {
+                  "leftValue": "={{ $json.priority }}",
+                  "operation": "equal",
+                  "rightValue": "medium"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "urgent-sms",
+      "name": "URGENT Lead - Immediate SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 100],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.textbelt.com/text",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "{\n  \"phone\": \"4378304202\",\n  \"message\": \"🚨 URGENT LEAD ALERT! ({{ $json.estimatedValue }})\\n\\n👤 {{ $json.name }}\\n📧 {{ $json.email }}\\n📞 {{ $json.phone }}\\n🏗️ {{ $json.projectType }}\\n📍 {{ $json.location }}\\n⚡ Score: {{ $json.totalScore }}/100\\n\\n💰 DROP EVERYTHING - CALL NOW!\",\n  \"key\": \"textbelt\"\n}"
+      }
+    },
+    {
+      "id": "high-priority-sms",
+      "name": "High Priority SMS",
+      "type": "n8n-nodes-base.httpRequest", 
+      "typeVersion": 4,
+      "position": [700, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.textbelt.com/text",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "{\n  \"phone\": \"4378304202\",\n  \"message\": \"💰 HIGH VALUE LEAD ({{ $json.estimatedValue }})\\n\\n👤 {{ $json.name }}\\n📞 {{ $json.phone }}\\n🏗️ {{ $json.projectType }}\\n📍 {{ $json.location }}\\n📊 Score: {{ $json.totalScore }}/100\\n\\n⏰ Call within 1 hour for best results!\",\n  \"key\": \"textbelt\"\n}"
+      }
+    },
+    {
+      "id": "medium-email",
+      "name": "Medium Priority Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [700, 300],
+      "parameters": {
+        "operation": "send",
+        "to": "fernandconstructions@sooptimal.com",
+        "subject": "New Lead: {{ $json.name }} - {{ $json.projectType }}",
+        "body": "New lead received:\\n\\nName: {{ $json.name }}\\nPhone: {{ $json.phone }}\\nProject: {{ $json.projectType }}\\nLocation: {{ $json.location }}\\nTimeline: {{ $json.timeline }}\\nScore: {{ $json.totalScore }}/100\\nEstimated Value: {{ $json.estimatedValue }}\\n\\nRecommended response time: {{ $json.responseTime }}"
+      }
+    },
+    {
+      "id": "lead-database",
+      "name": "Save to Lead Database",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 200],
+      "parameters": {
+        "operation": "appendRow",
+        "documentId": "1BvlRWW8_Tf-LMK-dYgL2uS8QVu7fOjLJ9nT2QwK2fXs",
+        "sheetName": "SuperPower Leads",
+        "columnNames": "timestamp,leadId,name,phone,email,projectType,location,timeline,totalScore,priority,estimatedValue,responseTime,status",
+        "values": {
+          "timestamp": "={{ $json.timestamp }}",
+          "leadId": "={{ $json.leadId }}",
+          "name": "={{ $json.name }}",
+          "phone": "={{ $json.phone }}",
+          "email": "={{ $json.email }}",
+          "projectType": "={{ $json.projectType }}",
+          "location": "={{ $json.location }}",
+          "timeline": "={{ $json.timeline }}",
+          "totalScore": "={{ $json.totalScore }}",
+          "priority": "={{ $json.priority }}",
+          "estimatedValue": "={{ $json.estimatedValue }}",
+          "responseTime": "={{ $json.responseTime }}",
+          "status": "new"
+        }
+      }
+    },
+    {
+      "id": "auto-responder",
+      "name": "Immediate Auto Response",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [500, 400],
+      "parameters": {
+        "operation": "send",
+        "to": "={{ $json.email }}",
+        "subject": "Your Drywall Quote Request - SoOptimal Contracting",
+        "body": "Hi {{ $json.name }},\\n\\nThank you for your {{ $json.projectType }} quote request! \\n\\nI've received your information and will contact you within {{ $json.responseTime }} to discuss your project and provide a detailed estimate.\\n\\nIn the meantime, feel free to call me directly at (437) 830-4202 if you have any immediate questions.\\n\\nBest regards,\\nFernand\\nSoOptimal Contracting\\n\\n✓ 10+ years experience\\n✓ Free estimates\\n✓ Licensed & insured\\n✓ Same-week service"
+      }
+    }
+  ],
+  "connections": {
+    "Website Lead Capture": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Superpower Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Superpower Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Priority Lead Router",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Immediate Auto Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priority Lead Router": {
+      "main": [
+        [
+          {
+            "node": "URGENT Lead - Immediate SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "High Priority SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Medium Priority Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URGENT Lead - Immediate SMS": {
+      "main": [
+        [
+          {
+            "node": "Save to Lead Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Priority SMS": {
+      "main": [
+        [
+          {
+            "node": "Save to Lead Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medium Priority Email Alert": {
+      "main": [
+        [
+          {
+            "node": "Save to Lead Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

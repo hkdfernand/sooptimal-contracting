@@ -1,0 +1,108 @@
+{
+  "name": "SoOptimal Contracting Lead Management",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sooptimal-quote",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Quote Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// SoOptimal Contracting Pricing Calculator\nconst data = $input.all()[0].json;\n\n// Pricing rates per sq ft\nconst rates = {\n  residential: {\n    installation: 2.50,\n    repair: 45, // per hour\n    finishing: 3.25,\n    complete: 4.75\n  },\n  commercial: {\n    installation: 2.25,\n    repair: 55, // per hour  \n    finishing: 3.00,\n    complete: 4.25\n  }\n};\n\nconst minimums = {\n  residential: 350,\n  commercial: 1500,\n  repair: 200\n};\n\nconst projectType = data.projectType || 'residential';\nconst serviceType = data.serviceType || 'complete';\nconst sqFootage = parseInt(data.sqFootage) || 0;\nconst roomCount = parseInt(data.roomCount) || 1;\n\nlet basePrice;\nif (serviceType === 'repair') {\n  const estimatedHours = Math.max(sqFootage / 50, 2);\n  basePrice = estimatedHours * rates[projectType][serviceType];\n} else {\n  basePrice = sqFootage * rates[projectType][serviceType];\n}\n\n// Apply minimum\nbasePrice = Math.max(basePrice, minimums[projectType]);\n\n// Bulk discounts for large projects\nif (sqFootage > 2000) basePrice *= 0.92; // 8% discount\nif (sqFootage > 5000) basePrice *= 0.88; // additional 4% (12% total)\n\n// Room complexity multiplier\nif (roomCount > 5) basePrice *= 1.1;\n\nconst lowPrice = Math.round(basePrice * 0.85);\nconst highPrice = Math.round(basePrice * 1.15);\n\nreturn {\n  ...data,\n  pricing: {\n    lowPrice,\n    highPrice,\n    basePrice: Math.round(basePrice),\n    rate: rates[projectType][serviceType],\n    projectType,\n    serviceType,\n    sqFootage,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "pricing-calculator",
+      "name": "Calculate Pricing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "success-response",
+              "name": "success",
+              "type": "boolean", 
+              "value": true
+            },
+            {
+              "id": "message-response", 
+              "name": "message",
+              "type": "string",
+              "value": "Quote request received successfully! We'll contact you within 2 hours."
+            },
+            {
+              "id": "estimate-response",
+              "name": "estimate", 
+              "type": "string",
+              "value": "=${{ $json.pricing.lowPrice }} - ${{ $json.pricing.highPrice }}"
+            }
+          ]
+        }
+      },
+      "id": "prepare-response",
+      "name": "Prepare Response", 
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": $json.message, \"estimate\": $json.estimate } }}"
+      },
+      "id": "webhook-response",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Quote Request Webhook": {
+      "main": [
+        [
+          {
+            "node": "Calculate Pricing",
+            "type": "main", 
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Pricing": {
+      "main": [
+        [
+          {
+            "node": "Prepare Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
