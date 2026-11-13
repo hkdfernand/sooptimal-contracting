@@ -212,6 +212,15 @@ def quote_form(rel, fid="q", heading="Get a free quote", service=None, compact=F
 <p class="form-alt">Faster: text photos to <a href="sms:{C["phone_tel"]}">{C["phone_display"]}</a></p>
 </form>'''
 
+ICON={"shield":'<path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
+"doc":'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+"up":'<path d="M5 21V10l7-6 7 6v11"/><path d="M9 21v-6h6v6"/>',
+"clock":'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}
+def trustbar():
+    items=[("shield","Liability insured","Certificate sent on request"),("doc","WSIB covered","Clearance certificate available"),
+           ("up","Working at Heights","Plus aerial lift and WHMIS"),("clock","Quotes in one business day","Free, written and itemised")]
+    return '<section class="trustbar"><div class="wrap"><ul>'+"".join(f'<li><svg viewBox="0 0 24 24" aria-hidden="true">{ICON[i]}</svg><div><b>{a}</b><span>{b}</span></div></li>' for i,a,b in items)+'</ul></div></section>'
+
 def trust_items():
     t=["Free written quotes","Repair and paint by one contractor","Registered Ontario business, HST invoices","Real photos from our own jobs"]
     if C["insured"] and C["wsib"]: t[2]="Liability insured, WSIB covered"
@@ -239,10 +248,10 @@ def page(path, title, desc, body, rel, extra_ld="", noindex=False, landing=False
 {"<meta name='robots' content='noindex'>" if noindex else ""}
 <meta property="og:type" content="website"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{canon}"><meta property="og:image" content="{C["domain"]}/img/{og}"><meta property="og:locale" content="en_CA">
-<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#14202B">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#0C1116">
 <link rel="icon" href="{rel}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{rel}style.css">
 {tracking()}{ld(business_ld())}{extra_ld}</head>
 <body{" class='landing'" if landing else ""}>
@@ -269,15 +278,16 @@ def write(path, s):
 # ----------------------------------------------------------------- PAGES
 def home():
     rel=""
-    svc="".join(f'''<a class="card" href="{s["slug"]}/">{img(s["img"],s["alt"],rel,sizes="(min-width:900px) 30vw, 100vw")}<div><h3>{e(s["nav"])}</h3><p>{e(s["lead"].split(". ")[0])}.</p><span class="more">See details</span></div></a>''' for s in SERVICES)
+    svc="".join(f'''<a class="card photo" href="{s["slug"]}/">{img(s["img"],s["alt"],rel,sizes="(min-width:900px) 30vw, 100vw")}<div><h3>{e(s["nav"])}</h3><p>{e(s["lead"].split(". ")[0])}.</p><span class="more">See details</span></div></a>''' for s in SERVICES)
     areas="".join(f'<li><a href="{a["slug"]}/">{a["city"]}</a></li>' for a in AREAS)
-    body=f'''<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
-<p class="eyebrow">Painting · Drywall repair · Plaster · {C["base_city"]}</p>
+    body=f'''<section class="hero">{img("living-room-finished-wide","",rel,cls="hero-bg",eager=True,sizes="100vw")}<div class="wrap hero-grid"><div class="hero-copy">
+<p class="eyebrow">Painting · Drywall · Plaster · {C["base_city"]}</p>
 <h1>Walls repaired right, then painted clean.</h1>
 <p class="lead">SoOptimal Contracting fixes damaged drywall and plaster and paints interiors for homeowners, landlords and property managers in Kitchener, Waterloo, Cambridge and Guelph. One contractor for the repair and the paint.</p>
 <div class="hero-btns"><a class="btn btn-primary" href="#quote">Get a free quote</a><a class="btn btn-ghost" href="sms:{C["phone_tel"]}">Text photos to {C["phone_display"]}</a></div>
 <ul class="ticks">{"".join(f"<li>{e(t)}</li>" for t in trust_items())}</ul></div>
 <div class="hero-form" id="quote">{quote_form(rel,"hq",compact=True)}</div></div></section>
+{trustbar()}
 
 <section class="proof"><div class="wrap"><p class="eyebrow">One apartment unit, October 2026</p><h2>Before, during and after. Same job.</h2>
 <div class="tri"><figure>{img("kitchen-wall-damage-before","Kitchen wall with gouges, anchor holes and a removed light fixture before repair",rel,sizes="(min-width:900px) 33vw, 100vw")}<figcaption><b>Before</b> Gouged walls, anchor holes, openings left by other trades.</figcaption></figure>
@@ -367,7 +377,7 @@ def work_page():
 
 def quote_page():
     rel="../"
-    body=f'''<section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><p class="eyebrow">Free quote · {C["base_city"]}, Cambridge, Guelph</p>
+    body=f'''<section class="hero">{img("living-room-finished-wide","",rel,cls="hero-bg",eager=True,sizes="100vw")}<div class="wrap hero-grid"><div class="hero-copy"><p class="eyebrow">Free quote · {C["base_city"]}, Cambridge, Guelph</p>
 <h1>Painting or wall repair? Get a written price by tomorrow.</h1>
 <p class="lead">Tell us what needs doing, add a photo if you have one, and we will reply with a written quote within one business day.</p>
 <ul class="ticks">{"".join(f"<li>{e(t)}</li>" for t in trust_items())}</ul>
